@@ -1,4 +1,4 @@
-# tarang — it catches what no one else does
+# tarang watch - it catches what no one else does !
 
 it’s 2:47 a.m. over the Indian subcontinent.  
 somewhere in the HF band, a short burst fires at 14.235 MHz.  
