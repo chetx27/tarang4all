@@ -21,6 +21,7 @@ export default function SpectrumPanel() {
   const [sweepProgress, setSweepProgress] = useState(0)
   const [activeMarkers, setActiveMarkers] = useState<Marker[]>([])
   const [tick, setTick] = useState(0)
+  const [demoActive, setDemoActive] = useState(false)
 
   const SCAN_INTERVAL = 30 // seconds
   const sweepTimerRef = useRef<any | null>(null)
@@ -35,11 +36,12 @@ export default function SpectrumPanel() {
 
   // Continuous animation ticker for real-time waterfall scrolling and spectrum noise dancing
   useEffect(() => {
+    if (!demoActive) return
     const timer = setInterval(() => {
       setTick(t => t + 1)
     }, 150)
     return () => clearInterval(timer)
-  }, [])
+  }, [demoActive])
 
   // Manage sweep progress animation simulation
   useEffect(() => {
@@ -192,6 +194,7 @@ export default function SpectrumPanel() {
     const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001')
     
     socket.on('spectrum_update', (data) => {
+      if (!demoActive) return // Strictly freeze waterfall until button is clicked
       const fft = data.fft_data || [] // array of 512 values
       buffer.current.push(fft)
       if (buffer.current.length > 120) buffer.current.shift()
@@ -243,7 +246,7 @@ export default function SpectrumPanel() {
       window.removeEventListener('resize', resizeCanvas)
       socket.disconnect()
     }
-  }, [])
+  }, [demoActive])
 
   // Format Recharts custom tooltip
   const CustomTooltip = ({ active, payload }: any) => {
@@ -293,6 +296,7 @@ export default function SpectrumPanel() {
         <div className="flex items-center px-4">
           <button 
             onClick={() => {
+              setDemoActive(true)
               const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001')
               socket.emit('start_demo')
               setTimeout(() => socket.disconnect(), 1000)
