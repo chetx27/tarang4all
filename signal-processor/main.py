@@ -4,11 +4,12 @@ import time
 import signal
 import queue
 import threading
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from kiwisdr_client import KiwiSDRClient, SCAN_FREQUENCIES_KHZ
+from kiwisdr_client import KiwiSDRClient, MockKiwiSDRClient, SCAN_FREQUENCIES_KHZ
 from fft_processor import FFTProcessor
 from anomaly_detector import AnomalyDetector
 import requests
@@ -40,7 +41,7 @@ NODES = [
 
 frame_queue = queue.Queue(maxsize=2000)
 anomaly_queue = queue.Queue(maxsize=500)
-clients: list[KiwiSDRClient] = []
+clients = []
 
 app = FastAPI(title="TarangWatch Signal Processor")
 
@@ -78,9 +79,42 @@ def wait_for_backend():
     return False
 
 
+def seed_demo_data():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    seed_path = os.path.join(current_dir, "data", "seed_transmissions.json")
+    if not os.path.exists(seed_path):
+        print(f"[Main] Demo seed file not found at: {seed_path}")
+        return
+        
+    print(f"[Main] Seeding demo fingerprints to backend: {BACKEND_URL}")
+    try:
+        with open(seed_path, "r") as f:
+            data = json.load(f)
+            
+        for i, fp in enumerate(data.get("fingerprints", [])):
+            resp = requests.post(
+                f"{BACKEND_URL}/api/fingerprints/seed",
+                json=fp,
+                timeout=10
+            )
+            if resp.status_code in (200, 201):
+                print(f"  [{i+1}] Seeded fingerprint: {fp['primary_frequency_mhz']} MHz ({fp['primary_city']})")
+            else:
+                print(f"  [{i+1}] Failed to seed fingerprint: {resp.status_code}")
+    except Exception as e:
+        print(f"[Main] Seeding error: {e}")
+
+
 def main():
+    demo_mode = "--demo" in sys.argv
+    if demo_mode:
+        print("[Main] 🛡️ Running in DEMO MODE (simulating hardware / KiwiSDR feeds)")
+
     if not wait_for_backend():
         sys.exit(1)
+
+    if demo_mode:
+        seed_demo_data()
 
     # Start FFT processor
     fft = FFTProcessor(frame_queue, anomaly_queue)
@@ -94,24 +128,35 @@ def main():
 
     # Start KiwiSDR clients
     for node_cfg in NODES:
-        if not node_cfg["host"]:
-            print(f"[Main] Skipping {node_cfg['name']}: "
-                  f"no host configured")
-            continue
-        client = KiwiSDRClient(
-            host=node_cfg["host"],
-            port=node_cfg["port"],
-            node_name=node_cfg["name"],
-            city=node_cfg["city"],
-            frame_queue=frame_queue
-        )
+        if demo_mode:
+            # In demo mode, spin up mock client generators for all nodes
+            client = MockKiwiSDRClient(
+                host="127.0.0.1",
+                port=8073,
+                node_name=node_cfg["name"],
+                city=node_cfg["city"],
+                frame_queue=frame_queue
+            )
+        else:
+            if not node_cfg["host"]:
+                print(f"[Main] Skipping {node_cfg['name']}: "
+                      f"no host configured")
+                continue
+            client = KiwiSDRClient(
+                host=node_cfg["host"],
+                port=node_cfg["port"],
+                node_name=node_cfg["name"],
+                city=node_cfg["city"],
+                frame_queue=frame_queue
+            )
+            
         clients.append(client)
         threading.Thread(
             target=client.connect,
             daemon=True,
             name=f"kiwi-{node_cfg['name']}"
         ).start()
-        print(f"[Main] Started client: {node_cfg['name']}")
+        print(f"[Main] Started {'mock ' if demo_mode else ''}client: {node_cfg['name']}")
 
     # FastAPI in background thread
     threading.Thread(

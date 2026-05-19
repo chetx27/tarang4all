@@ -19,15 +19,25 @@ export default function SpectrumPanel() {
   const [selectedCity, setSelectedCity] = useState('Delhi')
   const [sweepProgress, setSweepProgress] = useState(0)
   const [activeMarkers, setActiveMarkers] = useState<Marker[]>([])
+  const [tick, setTick] = useState(0)
 
   const SCAN_INTERVAL = 30 // seconds
   const sweepTimerRef = useRef<any | null>(null)
+  const waterfallCanvasRef = useRef<HTMLCanvasElement | null>(null)
 
   // Default selected city based on the most recent anomaly
   useEffect(() => {
     if (anomalies.length > 0) {
       setSelectedCity(anomalies[0].city)
     }
+  }, [])
+
+  // Continuous animation ticker for real-time waterfall scrolling and spectrum noise dancing
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTick(t => t + 1)
+    }, 150)
+    return () => clearInterval(timer)
   }, [])
 
   // Manage sweep progress animation simulation
@@ -93,7 +103,7 @@ export default function SpectrumPanel() {
   // Get active anomaly for PSD rendering
   const activeAnomaly = anomalies.find(a => a.city === selectedCity)
 
-  // Generate synthetic beautiful high-density PSD curve when no real array exists
+  // Generate synthetic beautiful high-density PSD curve with micro-fluctuations (tick-driven)
   const generatePSDData = () => {
     const low = Number(activeNode.frequency_range_low_mhz || 0.5)
     const high = Number(activeNode.frequency_range_high_mhz || 30.0)
@@ -106,30 +116,44 @@ export default function SpectrumPanel() {
       const freq = low + ((high - low) * i) / size
       
       // Base noise: nice random fluctuations with a baseline floor around 15 dBm
-      let power = 15 + Math.sin(i / 8) * 4 + Math.cos(i / 3) * 2 + Math.random() * 3
+      // Uses sine/cos mixed with tick to create real flowing waves
+      const noiseWave = Math.sin(i / 8 + tick * 0.1) * 3 + Math.cos(i / 3 - tick * 0.05) * 1.5
+      let power = 15 + noiseWave + Math.random() * 2.5
 
       // Overlay signal spikes if there is an active anomaly/trigger
       if (activeAnomaly) {
-        // Create a strong, realistic Gaussian bell curve spike at the anomaly's peak frequency
         const distance = Math.abs(freq - peakFreq)
         if (distance < 0.8) {
           const peakHeight = Math.abs(Number(activeAnomaly.peak_power_db || -60))
-          power += (peakHeight > 0 ? peakHeight : 75) * Math.exp(-Math.pow(distance, 2) / 0.04)
+          // Add pulse modulation to the spike
+          const spikeMod = 1 + Math.sin(tick * 0.4) * 0.05
+          power += (peakHeight > 0 ? peakHeight : 75) * spikeMod * Math.exp(-Math.pow(distance, 2) / 0.04)
         }
       }
 
       // Add default historic spikes for Delhi, Mumbai, Bengaluru to make them visually premium
       if (selectedCity === 'Delhi') {
         if (Math.abs(freq - 14.235) < 0.4) {
-          power += 65 * Math.exp(-Math.pow(freq - 14.235, 2) / 0.015)
+          power += (65 + Math.sin(tick * 0.25) * 4) * Math.exp(-Math.pow(freq - 14.235, 2) / 0.015)
+        }
+        if (Math.abs(freq - 18.095) < 0.25) {
+          power += (45 + Math.cos(tick * 0.35) * 3) * Math.exp(-Math.pow(freq - 18.095, 2) / 0.008)
         }
       } else if (selectedCity === 'Mumbai') {
-        if (Math.abs(freq - 7.073) < 0.3) {
-          power += 75 * Math.exp(-Math.pow(freq - 7.073, 2) / 0.01)
+        if (Math.abs(freq - 7.073) < 0.5) {
+          // Wideband continuous signal
+          power += (75 + Math.sin(tick * 0.15) * 5) * Math.exp(-Math.pow(freq - 7.073, 2) / 0.12)
+        }
+        if (Math.abs(freq - 10.118) < 0.3) {
+          // Hopping signal spike
+          power += (55 + Math.cos(tick * 0.3) * 8) * Math.exp(-Math.pow(freq - 10.118, 2) / 0.02)
         }
       } else if (selectedCity === 'Bengaluru') {
         if (Math.abs(freq - 21.340) < 0.5) {
-          power += 55 * Math.exp(-Math.pow(freq - 21.340, 2) / 0.02)
+          power += (55 + Math.sin(tick * 0.2) * 3) * Math.exp(-Math.pow(freq - 21.340, 2) / 0.02)
+        }
+        if (Math.abs(freq - 14.150) < 0.35) {
+          power += (60 + Math.cos(tick * 0.3) * 6) * Math.exp(-Math.pow(freq - 14.150, 2) / 0.015)
         }
       }
 
@@ -142,6 +166,77 @@ export default function SpectrumPanel() {
   }
 
   const psdData = generatePSDData()
+
+  // Manage High-performance scrolling waterfall canvas
+  useEffect(() => {
+    const canvas = waterfallCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const resizeCanvas = () => {
+      const rect = canvas.getBoundingClientRect()
+      canvas.width = rect.width || 600
+      canvas.height = rect.height || 120
+      
+      // Initialize with dark blue empty space
+      ctx.fillStyle = '#080C14'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+    }
+
+    resizeCanvas()
+    window.addEventListener('resize', resizeCanvas)
+    return () => window.removeEventListener('resize', resizeCanvas)
+  }, [selectedCity])
+
+  // Shift canvas and draw a new row when psdData (tick) changes
+  useEffect(() => {
+    const canvas = waterfallCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const w = canvas.width
+    const h = canvas.height
+
+    // 1. Shift canvas content DOWN by 1.5 pixels for smooth vertical scrolling waterfall
+    const tempCanvas = document.createElement('canvas')
+    tempCanvas.width = w
+    tempCanvas.height = h
+    const tempCtx = tempCanvas.getContext('2d')
+    if (tempCtx) {
+      tempCtx.drawImage(canvas, 0, 0)
+      ctx.clearRect(0, 0, w, h)
+      ctx.drawImage(tempCanvas, 0, 1.5, w, h - 1.5)
+    }
+
+    // 2. Draw the new top row based on the current PSD data curve
+    const rowImgData = ctx.createImageData(w, 1)
+    
+    for (let x = 0; x < w; x++) {
+      const binIdx = Math.floor((x / w) * psdData.length)
+      const pwr = psdData[binIdx]?.power || 0
+      
+      // Color mapping using an elegant INFERNO/Thermal colormap
+      // Low signal: dark navy blue / violet
+      // Mid signal: magenta / deep orange
+      // Strong signal: bright yellow / white
+      const intensity = Math.min(255, Math.max(0, (pwr / 100) * 255))
+      
+      // Thermal formula
+      const r = Math.min(255, Math.pow(intensity / 255, 1.5) * 255 * 1.5)
+      const g = Math.min(255, Math.pow(intensity / 255, 3.2) * 255 * 1.3)
+      const b = Math.min(255, Math.pow(intensity / 255, 6.0) * 255 + (intensity > 30 ? (intensity - 30) * 0.45 : 0))
+      
+      const idx = x * 4
+      rowImgData.data[idx] = Math.round(r)
+      rowImgData.data[idx+1] = Math.round(g)
+      rowImgData.data[idx+2] = Math.round(b)
+      rowImgData.data[idx+3] = 255
+    }
+    
+    ctx.putImageData(rowImgData, 0, 0)
+  }, [psdData])
 
   // Format Recharts custom tooltip
   const CustomTooltip = ({ active, payload }: any) => {
@@ -187,9 +282,10 @@ export default function SpectrumPanel() {
         })}
       </div>
 
-      {/* 2. MAIN SPECTRUM CHART (60% height) */}
-      <div className="flex-1 min-h-[280px] p-4 bg-canvas flex flex-col justify-end">
-        <div className="w-full h-full relative">
+      {/* 2. SPECTRUM VISUALIZER WORKSPACE */}
+      <div className="flex-1 p-4 bg-canvas flex flex-col gap-4 min-h-[380px]">
+        {/* Top: 2D PSD Density Curve */}
+        <div className="flex-[3] min-h-[200px] relative">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={psdData} margin={{ top: 20, right: 10, left: -25, bottom: 0 }}>
               <defs>
@@ -251,9 +347,21 @@ export default function SpectrumPanel() {
             </AreaChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Bottom: 3D Rolling Spectrogram Waterfall */}
+        <div className="flex-[2] min-h-[110px] flex flex-col gap-1.5">
+          <div className="flex justify-between items-center text-[9px] font-mono text-muted tracking-wider">
+            <span className="uppercase font-semibold text-secondary">REAL-TIME SPECTROGRAM WATERFALL (HISTORICAL SCAN)</span>
+            <span>-120 dBm ────── -40 dBm</span>
+          </div>
+          <canvas 
+            ref={waterfallCanvasRef} 
+            className="border border-border/80 rounded-sm w-full flex-1 h-[110px] shadow-inner select-none pointer-events-none"
+          />
+        </div>
       </div>
 
-      {/* 3. SCANNER INFO STATUS (15% height) */}
+      {/* 3. SCANNER INFO STATUS */}
       <div className="h-[76px] border-t border-border bg-surface px-6 py-3 flex justify-between items-center">
         
         {/* Left: Tuning Sweep */}
@@ -292,7 +400,7 @@ export default function SpectrumPanel() {
 
       </div>
 
-      {/* 4. RECENT STRIP (25% height) */}
+      {/* 4. RECENT STRIP */}
       <div className="h-[120px] border-t border-border bg-elevated/40 p-3 flex flex-col gap-2">
         <span className="font-mono text-[9px] text-muted tracking-widest uppercase">RECENT DETECTIONS</span>
         

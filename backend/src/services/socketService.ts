@@ -24,10 +24,15 @@ export function setupSocketHandlers(io: Server): void {
             .select('*')
         ])
 
+      const mappedNodes = (nodes.data ?? []).map(n => ({
+        ...n,
+        current_frequency_khz: n.frequency_range_low_mhz ? Math.round(Number(n.frequency_range_low_mhz) * 1000) : null
+      }))
+
       socket.emit('initial_state', {
         anomalies: anomalies.data ?? [],
         fingerprints: fingerprints.data ?? [],
-        nodes: nodes.data ?? []
+        nodes: mappedNodes
       })
     } catch (e) {
       console.error('[Socket] Initial state failed:', e)

@@ -3,6 +3,8 @@ import express from 'express'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import cors from 'cors'
+import path from 'path'
+import fs from 'fs'
 import { testConnection } from './db/supabase'
 import { initializeHindsight } from './services/hindsightService'
 import { setupSocketHandlers } from './services/socketService'
@@ -21,6 +23,13 @@ const io = new Server(httpServer, {
 
 app.use(cors())
 app.use(express.json({ limit: '2mb' }))
+
+// Ensure public/spectrograms exists and serve it statically
+const publicSpectrogramsDir = path.join(__dirname, '..', 'public', 'spectrograms')
+if (!fs.existsSync(publicSpectrogramsDir)) {
+  fs.mkdirSync(publicSpectrogramsDir, { recursive: true })
+}
+app.use('/spectrograms', express.static(path.join(__dirname, '..', 'public', 'spectrograms')))
 
 // Make io accessible in routes
 app.set('io', io)

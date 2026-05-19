@@ -148,6 +148,8 @@ KIWISDR_BENGALURU_HOST=122.167.228.91
 KIWISDR_BENGALURU_PORT=8073
 ```
 
+```
+
 - Get a **Groq API key** free at [console.groq.com](https://console.groq.com).  
 - Leave `HINDSIGHT_API_KEY` empty if you don’t have access to Hindsight;  
   the system will fall back to mock memory mode automatically.
@@ -361,3 +363,97 @@ To contribute:
 
 built with 💙 by **chetx27** and team  
 tarangwatch — where HF waves don’t go unnoticed.
+
+---
+
+## Initialization & Deployment Guide
+
+Each tier of the TarangWatch ecosystem is modular and can be launched individually. 
+
+### 1. Central Control Server (Backend)
+The backend acts as the ingestion point and manages the database state, Socket.io broadcasts, and Hindsight Memory routines.
+
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Install Node.js packages:
+   ```bash
+   npm install
+   ```
+3. Configure the environment by editing the `.env` file with your credentials:
+   - `PORT=3001`
+   - `SUPABASE_URL=...`
+   - `SUPABASE_SERVICE_ROLE_KEY=...`
+   - `GROQ_API_KEY=...`
+   - `OLLAMA_HOST=http://localhost:11434`
+4. Spin up the development server:
+   ```bash
+   npm run dev
+   ```
+   > [!NOTE]
+   > On startup, the backend automatically performs a database connection test and verifies if standard Indian spectrum node records are initialized. If the Supabase database is completely empty, it will **automatically seed the required nodes** and establish the initial state flawlessly!
+
+---
+
+### 2. Operator Interface (Frontend Dashboard)
+A premium dark dashboard displaying high-density signal Area Charts, a live rolling waterfall spectrogram, and active transmitter logs.
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install Vite dependencies:
+   ```bash
+   npm install
+   ```
+3. Establish environment flags inside `.env`:
+   - `VITE_BACKEND_URL=http://localhost:3001`
+4. Start the Vite React development server:
+   ```bash
+   npm run dev
+   ```
+   The browser will automatically serve the operator dashboard on `http://localhost:5173`.
+
+---
+
+### 3. DSP Ingest Node (Signal Processor)
+The Python pipeline connects to software-defined receivers, computes Hann-windowed FFT density charts, isolates anomalies, and classifies signals.
+
+1. Navigate to the signal processor directory:
+   ```bash
+   cd signal-processor
+   ```
+2. Create and activate a clean Python virtual environment:
+   ```bash
+   python -m venv venv
+   # On Windows:
+   venv\Scripts\activate
+   # On macOS/Linux:
+   source venv/bin/activate
+   ```
+3. Ingest required mathematical, binary and network dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. **Choose your operational mode**:
+   
+   #### A. Live Hardware Scanning Mode (Real KiwiSDR Feeds)
+   To stream actual live HF radio IQ data from real physical antennas in India:
+   - Ensure the `.env` file contains valid hosts for active receivers.
+   - Run the main pipeline:
+     ```bash
+     python main.py
+     ```
+   
+   #### B. Hardware Simulation / Demonstration Mode (Hardware-in-the-Loop)
+   To try the platform immediately without real SDR hardware or an active internet connection:
+   - Run with the dynamic `--demo` flag:
+     ```bash
+     python main.py --demo
+     ```
+     
+   > [!TIP]
+   > Running `python main.py --demo` does two high-value actions automatically:
+   > 1. It triggers a REST seed call to populate the Supabase DB with standard historic transmitter fingerprints (Delhi, Mumbai, Bengaluru).
+   > 2. It activates the `MockKiwiSDRClient` generator to simulate high-fidelity RF feeds—synthesizing real digital bursts, frequency hopping signals, wideband maritime carriers, and narrowband beacons complete with rolling colormapped spectrograms pushed live to your dashboard!

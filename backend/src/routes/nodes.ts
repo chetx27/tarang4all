@@ -16,7 +16,13 @@ router.get('/', async (req: Request, res: Response) => {
       .order('name', { ascending: true })
 
     if (error) throw error
-    return res.json(data)
+    
+    const mappedData = (data ?? []).map(n => ({
+      ...n,
+      current_frequency_khz: n.frequency_range_low_mhz ? Math.round(Number(n.frequency_range_low_mhz) * 1000) : null
+    }))
+    
+    return res.json(mappedData)
   } catch (err: any) {
     return res.status(500).json({ error: err.message || 'Internal Server Error' })
   }
@@ -58,10 +64,15 @@ router.post('/:name/status', async (req: Request, res: Response) => {
 
     if (updateError) throw updateError
 
-    // Emit live update
-    if (io) emitNodeStatusChanged(io, updatedNode)
+    const mappedNode = {
+      ...updatedNode,
+      current_frequency_khz: updatedNode.frequency_range_low_mhz ? Math.round(Number(updatedNode.frequency_range_low_mhz) * 1000) : null
+    }
 
-    return res.json(updatedNode)
+    // Emit live update
+    if (io) emitNodeStatusChanged(io, mappedNode)
+
+    return res.json(mappedNode)
   } catch (err: any) {
     console.error('Node status update error:', err)
     return res.status(500).json({ error: err.message || 'Internal Server Error' })

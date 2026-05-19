@@ -254,6 +254,21 @@ export default function AnomalyFeed() {
                     </p>
                   </div>
 
+                  {/* Real Spectrogram Image from Backend */}
+                  {anomaly.spectrogram_path && (
+                    <div className="flex flex-col gap-1 select-none">
+                      <span className="font-mono text-[9px] text-muted tracking-wider uppercase">INGESTED RF SIGNATURE (PNG)</span>
+                      <img 
+                        src={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'}${anomaly.spectrogram_path}`} 
+                        alt="RF Spectrogram" 
+                        className="border border-border rounded-sm w-full h-[60px] object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                        }}
+                      />
+                    </div>
+                  )}
+
                   {/* Fallback Thermal Spectrogram */}
                   <SpectrogramCanvas psd={anomaly.psd_array} />
 
