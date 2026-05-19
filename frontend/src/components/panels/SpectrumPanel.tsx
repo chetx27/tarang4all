@@ -3,6 +3,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, ReferenceLine 
 } from 'recharts'
+import { io } from 'socket.io-client'
 import { useTarangStore } from '../../store/tarangStore'
 import Badge from '../shared/Badge'
 
@@ -167,7 +168,9 @@ export default function SpectrumPanel() {
 
   const psdData = generatePSDData()
 
-  // Manage High-performance scrolling waterfall canvas
+  // Manage High-performance scrolling waterfall canvas using REAL Socket data
+  const buffer = useRef<number[][]>([])
+  
   useEffect(() => {
     const canvas = waterfallCanvasRef.current
     if (!canvas) return
@@ -179,64 +182,68 @@ export default function SpectrumPanel() {
       canvas.width = rect.width || 600
       canvas.height = rect.height || 120
       
-      // Initialize with dark blue empty space
       ctx.fillStyle = '#080C14'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
     resizeCanvas()
     window.addEventListener('resize', resizeCanvas)
-    return () => window.removeEventListener('resize', resizeCanvas)
-  }, [selectedCity])
 
-  // Shift canvas and draw a new row when psdData (tick) changes
-  useEffect(() => {
-    const canvas = waterfallCanvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001')
+    
+    socket.on('spectrum_update', (data) => {
+      const fft = data.fft_data || [] // array of 512 values
+      buffer.current.push(fft)
+      if (buffer.current.length > 120) buffer.current.shift()
+      
+      drawWaterfall()
+    })
 
-    const w = canvas.width
-    const h = canvas.height
+    const drawWaterfall = () => {
+      if (!canvas) return
+      const w = canvas.width
+      const h = canvas.height
+      
+      // Shift canvas content DOWN by 1.5 pixels
+      const tempCanvas = document.createElement('canvas')
+      tempCanvas.width = w
+      tempCanvas.height = h
+      const tempCtx = tempCanvas.getContext('2d')
+      if (tempCtx) {
+        tempCtx.drawImage(canvas, 0, 0)
+        ctx.clearRect(0, 0, w, h)
+        ctx.drawImage(tempCanvas, 0, 1.5, w, h - 1.5)
+      }
 
-    // 1. Shift canvas content DOWN by 1.5 pixels for smooth vertical scrolling waterfall
-    const tempCanvas = document.createElement('canvas')
-    tempCanvas.width = w
-    tempCanvas.height = h
-    const tempCtx = tempCanvas.getContext('2d')
-    if (tempCtx) {
-      tempCtx.drawImage(canvas, 0, 0)
-      ctx.clearRect(0, 0, w, h)
-      ctx.drawImage(tempCanvas, 0, 1.5, w, h - 1.5)
+      // Draw the new top row
+      const latestRow = buffer.current[buffer.current.length - 1]
+      if (!latestRow) return
+
+      const rowImgData = ctx.createImageData(w, 1)
+      for (let x = 0; x < w; x++) {
+        const binIdx = Math.floor((x / w) * latestRow.length)
+        const pwr = latestRow[binIdx] || 0
+        
+        const intensity = Math.min(255, Math.floor(pwr * 2.5))
+        
+        const r = intensity
+        const g = Math.floor(intensity * 0.4)
+        const b = 80
+        
+        const idx = x * 4
+        rowImgData.data[idx] = r
+        rowImgData.data[idx+1] = g
+        rowImgData.data[idx+2] = b
+        rowImgData.data[idx+3] = 255
+      }
+      ctx.putImageData(rowImgData, 0, 0)
     }
 
-    // 2. Draw the new top row based on the current PSD data curve
-    const rowImgData = ctx.createImageData(w, 1)
-    
-    for (let x = 0; x < w; x++) {
-      const binIdx = Math.floor((x / w) * psdData.length)
-      const pwr = psdData[binIdx]?.power || 0
-      
-      // Color mapping using an elegant INFERNO/Thermal colormap
-      // Low signal: dark navy blue / violet
-      // Mid signal: magenta / deep orange
-      // Strong signal: bright yellow / white
-      const intensity = Math.min(255, Math.max(0, (pwr / 100) * 255))
-      
-      // Thermal formula
-      const r = Math.min(255, Math.pow(intensity / 255, 1.5) * 255 * 1.5)
-      const g = Math.min(255, Math.pow(intensity / 255, 3.2) * 255 * 1.3)
-      const b = Math.min(255, Math.pow(intensity / 255, 6.0) * 255 + (intensity > 30 ? (intensity - 30) * 0.45 : 0))
-      
-      const idx = x * 4
-      rowImgData.data[idx] = Math.round(r)
-      rowImgData.data[idx+1] = Math.round(g)
-      rowImgData.data[idx+2] = Math.round(b)
-      rowImgData.data[idx+3] = 255
+    return () => {
+      window.removeEventListener('resize', resizeCanvas)
+      socket.disconnect()
     }
-    
-    ctx.putImageData(rowImgData, 0, 0)
-  }, [psdData])
+  }, [])
 
   // Format Recharts custom tooltip
   const CustomTooltip = ({ active, payload }: any) => {
@@ -258,28 +265,43 @@ export default function SpectrumPanel() {
   return (
     <div className="h-full flex flex-col bg-canvas select-none">
       
-      {/* 1. CITY TABS */}
-      <div className="flex border-b border-border bg-surface px-2">
-        {cities.map(city => {
-          const node = nodes.find(n => n.city === city)
-          const isConnected = node?.status === 'connected'
-          const isActive = selectedCity === city
+      {/* 1. CITY TABS AND DEMO BUTTON */}
+      <div className="flex justify-between border-b border-border bg-surface px-2">
+        <div className="flex">
+          {cities.map(city => {
+            const node = nodes.find(n => n.city === city)
+            const isConnected = node?.status === 'connected'
+            const isActive = selectedCity === city
 
-          return (
-            <button
-              key={city}
-              onClick={() => setSelectedCity(city)}
-              className={`px-6 py-2.5 text-xs font-semibold tracking-wider flex items-center gap-2 border-b-2 transition-all ${
-                isActive 
-                  ? 'text-primary border-accent' 
-                  : 'text-secondary border-transparent hover:text-primary'
-              }`}
-            >
-              <span>{city.toUpperCase()}</span>
-              <span className={`h-1.5 w-1.5 rounded-full ${isConnected ? 'bg-threat-low' : 'bg-muted'}`} />
-            </button>
-          )
-        })}
+            return (
+              <button
+                key={city}
+                onClick={() => setSelectedCity(city)}
+                className={`px-6 py-2.5 text-xs font-semibold tracking-wider flex items-center gap-2 border-b-2 transition-all ${
+                  isActive 
+                    ? 'text-primary border-accent' 
+                    : 'text-secondary border-transparent hover:text-primary'
+                }`}
+              >
+                <span>{city.toUpperCase()}</span>
+                <span className={`h-1.5 w-1.5 rounded-full ${isConnected ? 'bg-threat-low' : 'bg-muted'}`} />
+              </button>
+            )
+          })}
+        </div>
+        
+        <div className="flex items-center px-4">
+          <button 
+            onClick={() => {
+              const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001')
+              socket.emit('start_demo')
+              setTimeout(() => socket.disconnect(), 1000)
+            }}
+            className="px-4 py-1 text-[10px] font-bold text-white bg-red-600 hover:bg-green-600 uppercase tracking-widest rounded transition-colors shadow-lg"
+          >
+            Activate Live Demo Mode
+          </button>
+        </div>
       </div>
 
       {/* 2. SPECTRUM VISUALIZER WORKSPACE */}
