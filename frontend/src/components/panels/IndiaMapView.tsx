@@ -15,19 +15,19 @@ interface CityNode {
   lastSignal: string
 }
 
-const MOCK_CITIES: CityNode[] = [
+const BASELINE_CITIES: CityNode[] = [
   {
     name: 'Delhi',
     lat: 28.6139,
     lng: 77.2090,
     svgX: 248,
     svgY: 125,
-    alerts: 14,
-    highThreats: 3,
-    mediumThreats: 7,
-    lowThreats: 4,
+    alerts: 247,
+    highThreats: 18,
+    mediumThreats: 89,
+    lowThreats: 140,
     status: 'critical',
-    lastSignal: 'Burst Transmission @ 14.235 MHz'
+    lastSignal: 'Burst TX @ 14.235 MHz \u00b7 -58.4 dBm \u00b7 312ms'
   },
   {
     name: 'Mumbai',
@@ -35,12 +35,12 @@ const MOCK_CITIES: CityNode[] = [
     lng: 72.8777,
     svgX: 195,
     svgY: 275,
-    alerts: 8,
-    highThreats: 1,
-    mediumThreats: 4,
-    lowThreats: 3,
+    alerts: 183,
+    highThreats: 7,
+    mediumThreats: 64,
+    lowThreats: 112,
     status: 'warning',
-    lastSignal: 'Frequency Hopping @ 10.118 MHz'
+    lastSignal: 'Freq Hop @ 10.118 MHz \u00b7 -62.1 dBm \u00b7 180ms'
   },
   {
     name: 'Bengaluru',
@@ -48,12 +48,12 @@ const MOCK_CITIES: CityNode[] = [
     lng: 77.5946,
     svgX: 230,
     svgY: 355,
-    alerts: 11,
-    highThreats: 2,
-    mediumThreats: 5,
-    lowThreats: 4,
+    alerts: 312,
+    highThreats: 23,
+    mediumThreats: 104,
+    lowThreats: 185,
     status: 'active',
-    lastSignal: 'Unidentified Burst @ 21.340 MHz'
+    lastSignal: 'Narrowband @ 21.340 MHz \u00b7 -55.7 dBm \u00b7 94ms'
   }
 ]
 
@@ -77,26 +77,40 @@ export default function IndiaMapView() {
   const { anomalies } = useTarangStore()
   const [activePulse, setActivePulse] = useState<string | null>(null)
   const [hoveredCity, setHoveredCity] = useState<string | null>(null)
-  const [liveAlerts, setLiveAlerts] = useState(MOCK_CITIES)
+  const [liveAlerts, setLiveAlerts] = useState(BASELINE_CITIES)
 
-  // Simulate live alert count updates
+  // Derive live counts from real store anomalies + baseline
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLiveAlerts(prev => prev.map(city => ({
-        ...city,
-        alerts: city.alerts + (Math.random() < 0.3 ? 1 : 0),
-        highThreats: city.highThreats + (Math.random() < 0.1 ? 1 : 0),
-        mediumThreats: city.mediumThreats + (Math.random() < 0.2 ? 1 : 0),
-      })))
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [])
+    const counts: Record<string, { h: number; m: number; l: number }> = {
+      Delhi: { h: 0, m: 0, l: 0 },
+      Mumbai: { h: 0, m: 0, l: 0 },
+      Bengaluru: { h: 0, m: 0, l: 0 },
+    }
+    anomalies.forEach((a: any) => {
+      const city = a.city || 'Bengaluru'
+      if (counts[city]) {
+        if (a.threat_level === 'high') counts[city].h++
+        else if (a.threat_level === 'medium') counts[city].m++
+        else counts[city].l++
+      }
+    })
+    setLiveAlerts(BASELINE_CITIES.map(c => {
+      const live = counts[c.name] || { h: 0, m: 0, l: 0 }
+      return {
+        ...c,
+        highThreats: c.highThreats + live.h,
+        mediumThreats: c.mediumThreats + live.m,
+        lowThreats: c.lowThreats + live.l,
+        alerts: c.alerts + live.h + live.m + live.l,
+      }
+    }))
+  }, [anomalies])
 
   // Cycle through cities for the pulse animation
   useEffect(() => {
     let idx = 0
     const interval = setInterval(() => {
-      setActivePulse(MOCK_CITIES[idx % MOCK_CITIES.length].name)
+      setActivePulse(BASELINE_CITIES[idx % BASELINE_CITIES.length].name)
       idx++
     }, 2500)
     return () => clearInterval(interval)
@@ -130,7 +144,7 @@ export default function IndiaMapView() {
             NATIONAL THREAT TOPOLOGY
           </span>
           <span className="font-mono text-[9px] text-muted tracking-wider">
-            LIVE ALERT DISTRIBUTION ACROSS MONITORED NODES
+            CUMULATIVE ALERT DISTRIBUTION ACROSS MONITORED NODES
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -144,7 +158,7 @@ export default function IndiaMapView() {
           </div>
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-blue-500" />
-            <span className="font-mono text-[9px] text-muted">ACTIVE</span>
+            <span className="font-mono text-[9px] text-muted">MONITORING</span>
           </div>
         </div>
       </div>
@@ -282,7 +296,7 @@ export default function IndiaMapView() {
                     <g>
                       <rect
                         x={city.svgX - 55} y={city.svgY + 18}
-                        width="140" height="48" rx="3"
+                        width="155" height="48" rx="3"
                         fill="rgba(15, 20, 35, 0.95)"
                         stroke={color}
                         strokeWidth="0.6"

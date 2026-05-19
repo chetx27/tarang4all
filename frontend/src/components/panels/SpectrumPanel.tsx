@@ -228,11 +228,39 @@ export default function SpectrumPanel() {
         const binIdx = Math.floor((x / w) * latestRow.length)
         const pwr = latestRow[binIdx] || 0
         
-        const intensity = Math.min(255, Math.floor(pwr * 2.5))
+        // Thermal heatwave gradient: black → deep blue → cyan → green → yellow → orange → red → white
+        const t = Math.min(1, Math.max(0, pwr / 100))
+        let r = 0, g = 0, b = 0
         
-        const r = intensity
-        const g = Math.floor(intensity * 0.4)
-        const b = 80
+        if (t < 0.15) {
+          // Black to deep blue
+          const s = t / 0.15
+          r = 0; g = 0; b = Math.floor(60 * s)
+        } else if (t < 0.3) {
+          // Deep blue to cyan
+          const s = (t - 0.15) / 0.15
+          r = 0; g = Math.floor(180 * s); b = 60 + Math.floor(140 * s)
+        } else if (t < 0.45) {
+          // Cyan to green
+          const s = (t - 0.3) / 0.15
+          r = 0; g = 180 + Math.floor(75 * s); b = Math.floor(200 * (1 - s))
+        } else if (t < 0.6) {
+          // Green to yellow
+          const s = (t - 0.45) / 0.15
+          r = Math.floor(255 * s); g = 255; b = 0
+        } else if (t < 0.75) {
+          // Yellow to orange
+          const s = (t - 0.6) / 0.15
+          r = 255; g = 255 - Math.floor(100 * s); b = 0
+        } else if (t < 0.9) {
+          // Orange to red
+          const s = (t - 0.75) / 0.15
+          r = 255; g = 155 - Math.floor(155 * s); b = 0
+        } else {
+          // Red to bright white
+          const s = (t - 0.9) / 0.1
+          r = 255; g = Math.floor(200 * s); b = Math.floor(200 * s)
+        }
         
         const idx = x * 4
         rowImgData.data[idx] = r
@@ -297,14 +325,19 @@ export default function SpectrumPanel() {
         <div className="flex items-center px-4">
           <button 
             onClick={() => {
+              if (demoActive) return
               setDemoActive(true)
               const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001')
               socket.emit('start_demo')
               setTimeout(() => socket.disconnect(), 1000)
             }}
-            className="px-4 py-1 text-[10px] font-bold text-white bg-red-600 hover:bg-green-600 uppercase tracking-widest rounded transition-colors shadow-lg"
+            className={`px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded transition-colors shadow-lg ${
+              demoActive 
+                ? 'bg-green-600 text-white cursor-default animate-pulse' 
+                : 'bg-red-600 hover:bg-red-500 text-white cursor-pointer'
+            }`}
           >
-            Activate Live Demo Mode
+            {demoActive ? '\u25CF LIVE \u2014 STREAMING' : 'Activate Live Demo Mode'}
           </button>
         </div>
       </div>
