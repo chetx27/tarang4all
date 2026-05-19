@@ -1,0 +1,158 @@
+{
+  "generated_at": "2026-05-15T00:00:00Z",
+  "description": "Synthetic HF fingerprint history for demo",
+  "fingerprints": [
+    {
+      "fingerprint_hash": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+      "primary_frequency_mhz": 14.235,
+      "primary_city": "Delhi",
+      "cities_detected": ["Delhi"],
+      "detection_count": 6,
+      "confidence_score": 84.9,
+      "avg_burst_duration_ms": 312,
+      "avg_cycle_hours": 47.3,
+      "signal_class": "BURST_TRANSMISSION",
+      "time_pattern_description": "Every 47-49 hours, 02:00-02:20 IST",
+      "pattern_intelligence": "Recurring burst on 14.235 MHz. Consistent 0.3s duration. Narrow bandwidth suggests digital mode. Six detections over 12 days.",
+      "detections": [
+        { "detected_at": "2026-05-03T20:44:00Z", "peak_power_db": -67.3 },
+        { "detected_at": "2026-05-05T19:51:00Z", "peak_power_db": -68.1 },
+        { "detected_at": "2026-05-07T20:14:00Z", "peak_power_db": -66.9 },
+        { "detected_at": "2026-05-09T20:02:00Z", "peak_power_db": -67.8 },
+        { "detected_at": "2026-05-11T19:55:00Z", "peak_power_db": -67.1 },
+        { "detected_at": "2026-05-13T20:33:00Z", "peak_power_db": -68.4 }
+      ]
+    },
+    {
+      "fingerprint_hash": "b2c3d4e5f6b2c3d4e5f6b2c3d4e5f6b2c3d4e5f6b2c3d4e5f6b2c3d4e5f6b2c3",
+      "primary_frequency_mhz": 10.118,
+      "primary_city": "Mumbai",
+      "cities_detected": ["Mumbai", "Delhi"],
+      "detection_count": 4,
+      "confidence_score": 61.0,
+      "avg_burst_duration_ms": 180,
+      "avg_cycle_hours": 72.1,
+      "signal_class": "FREQUENCY_HOPPING",
+      "time_pattern_description": "Irregular, 06:00-08:00 IST window",
+      "pattern_intelligence": "Frequency hopping between 10.1-10.2 MHz. Detected in Mumbai first, then Delhi 5-6 hours later on same days. Possible mobile transmitter on western corridor.",
+      "detections": [
+        { "detected_at": "2026-05-06T01:23:00Z", "peak_power_db": -71.2 },
+        { "detected_at": "2026-05-06T07:18:00Z", "peak_power_db": -72.0 },
+        { "detected_at": "2026-05-09T01:44:00Z", "peak_power_db": -70.8 },
+        { "detected_at": "2026-05-09T07:31:00Z", "peak_power_db": -71.5 }
+      ]
+    },
+    {
+      "fingerprint_hash": "c3d4e5f6c3d4e5f6c3d4e5f6c3d4e5f6c3d4e5f6c3d4e5f6c3d4e5f6c3d4e5f6",
+      "primary_frequency_mhz": 21.340,
+      "primary_city": "Bengaluru",
+      "cities_detected": ["Bengaluru"],
+      "detection_count": 2,
+      "confidence_score": 22.0,
+      "avg_burst_duration_ms": 4200,
+      "avg_cycle_hours": null,
+      "signal_class": "UNLICENSED_NARROWBAND",
+      "time_pattern_description": "Two detections, no clear pattern yet",
+      "pattern_intelligence": "Continuous narrowband transmission on 21.34 MHz. Outside amateur and broadcast allocation. Only two detections — insufficient for pattern classification.",
+      "detections": [
+        { "detected_at": "2026-05-10T14:22:00Z", "peak_power_db": -63.4 },
+        { "detected_at": "2026-05-14T09:11:00Z", "peak_power_db": -64.1 }
+      ]
+    },
+    {
+      "fingerprint_hash": "d4e5f6d4e5f6d4e5f6d4e5f6d4e5f6d4e5f6d4e5f6d4e5f6d4e5f6d4e5f6d4e5",
+      "primary_frequency_mhz": 18.095,
+      "primary_city": "Delhi",
+      "cities_detected": ["Delhi"],
+      "detection_count": 3,
+      "confidence_score": 38.0,
+      "avg_burst_duration_ms": 95,
+      "avg_cycle_hours": 24.0,
+      "signal_class": "BURST_TRANSMISSION",
+      "time_pattern_description": "Daily, 22:00-23:00 IST",
+      "pattern_intelligence": "Short burst on 18.095 MHz. Daily occurrence in evening hours. Duration under 100ms consistent with data beacon.",
+      "detections": [
+        { "detected_at": "2026-05-12T16:41:00Z", "peak_power_db": -69.8 },
+        { "detected_at": "2026-05-13T16:55:00Z", "peak_power_db": -70.2 },
+        { "detected_at": "2026-05-14T17:03:00Z", "peak_power_db": -69.5 }
+      ]
+    },
+    {
+      "fingerprint_hash": "e5f6e5f6e5f6e5f6e5f6e5f6e5f6e5f6e5f6e5f6e5f6e5f6e5f6e5f6e5f6e5f6",
+      "primary_frequency_mhz": 7.073,
+      "primary_city": "Mumbai",
+      "cities_detected": ["Mumbai"],
+      "detection_count": 8,
+      "confidence_score": 77.0,
+      "avg_burst_duration_ms": 2100,
+      "avg_cycle_hours": 24.0,
+      "signal_class": "UNLICENSED_WIDEBAND",
+      "time_pattern_description": "Daily, 12:00-14:00 IST",
+      "pattern_intelligence": "Wideband continuous transmission on 7.073 MHz. Consistent midday window. 8 detections across 8 consecutive days — high recurrence. Frequency is just outside amateur 40m allocation.",
+      "detections": [
+        { "detected_at": "2026-05-07T06:31:00Z", "peak_power_db": -58.4 },
+        { "detected_at": "2026-05-08T06:44:00Z", "peak_power_db": -57.9 },
+        { "detected_at": "2026-05-09T06:38:00Z", "peak_power_db": -58.1 },
+        { "detected_at": "2026-05-10T06:52:00Z", "peak_power_db": -59.0 },
+        { "detected_at": "2026-05-11T06:41:00Z", "peak_power_db": -58.7 },
+        { "detected_at": "2026-05-12T06:33:00Z", "peak_power_db": -57.8 },
+        { "detected_at": "2026-05-13T06:48:00Z", "peak_power_db": -58.3 },
+        { "detected_at": "2026-05-14T06:39:00Z", "peak_power_db": -58.6 }
+      ]
+    },
+    {
+      "fingerprint_hash": "f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6",
+      "primary_frequency_mhz": 14.150,
+      "primary_city": "Bengaluru",
+      "cities_detected": ["Bengaluru", "Mumbai"],
+      "detection_count": 5,
+      "confidence_score": 54.0,
+      "avg_burst_duration_ms": 430,
+      "avg_cycle_hours": 36.0,
+      "signal_class": "BURST_TRANSMISSION",
+      "time_pattern_description": "Every 36 hours, 04:00-05:00 IST",
+      "pattern_intelligence": "Burst on 14.15 MHz with 36-hour cycle. Detected across Bengaluru and Mumbai on same days. Timing suggests scheduled transmission.",
+      "detections": [
+        { "detected_at": "2026-05-08T22:31:00Z", "peak_power_db": -65.2 },
+        { "detected_at": "2026-05-10T10:44:00Z", "peak_power_db": -64.8 },
+        { "detected_at": "2026-05-11T22:51:00Z", "peak_power_db": -65.5 },
+        { "detected_at": "2026-05-13T11:02:00Z", "peak_power_db": -64.9 },
+        { "detected_at": "2026-05-14T23:18:00Z", "peak_power_db": -65.1 }
+      ]
+    },
+    {
+      "fingerprint_hash": "1a2b3c1a2b3c1a2b3c1a2b3c1a2b3c1a2b3c1a2b3c1a2b3c1a2b3c1a2b3c1a2b",
+      "primary_frequency_mhz": 9.560,
+      "primary_city": "Delhi",
+      "cities_detected": ["Delhi"],
+      "detection_count": 1,
+      "confidence_score": 10.0,
+      "avg_burst_duration_ms": 680,
+      "avg_cycle_hours": null,
+      "signal_class": "BURST_TRANSMISSION",
+      "time_pattern_description": "Single detection — monitoring",
+      "pattern_intelligence": "Single burst on 9.56 MHz. No pattern established. Monitoring for recurrence.",
+      "detections": [
+        { "detected_at": "2026-05-15T03:17:00Z", "peak_power_db": -72.1 }
+      ]
+    },
+    {
+      "fingerprint_hash": "2b3c4d2b3c4d2b3c4d2b3c4d2b3c4d2b3c4d2b3c4d2b3c4d2b3c4d2b3c4d2b3c",
+      "primary_frequency_mhz": 10.998,
+      "primary_city": "Mumbai",
+      "cities_detected": ["Mumbai"],
+      "detection_count": 3,
+      "confidence_score": 31.0,
+      "avg_burst_duration_ms": 8500,
+      "avg_cycle_hours": 48.0,
+      "signal_class": "UNLICENSED_NARROWBAND",
+      "time_pattern_description": "Every ~48 hours, 08:00-10:00 IST",
+      "pattern_intelligence": "Long-duration narrowband on 10.998 MHz. 8+ second transmissions suggest voice rather than data. Two-day cycle emerging.",
+      "detections": [
+        { "detected_at": "2026-05-11T02:41:00Z", "peak_power_db": -60.7 },
+        { "detected_at": "2026-05-13T02:58:00Z", "peak_power_db": -61.2 },
+        { "detected_at": "2026-05-15T03:09:00Z", "peak_power_db": -60.9 }
+      ]
+    }
+  ]
+}
