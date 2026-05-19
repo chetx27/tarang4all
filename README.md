@@ -1,24 +1,100 @@
-TarangWatch
-A distributed, autonomous high-frequency spectrum audit and intelligence platform designed to isolate, catalog, and analyze anomalous transmissions in real time.
-Operational Overview
-Radio spectrum surveillance is critical for regional security and network auditing, yet transient and undocumented signals often go unnoticed. TarangWatch solves this by maintaining continuous, multi-node monitoring over high-frequency (HF) bands across the Indian subcontinent.
-Through a distributed network of software-defined receivers (SDRs), the system analyzes digital signal characteristics, evaluates potential threats, and maps long-term behavioral heuristics of unregistered transmitters.
-Core Capabilities
-Autonomous Spectral Scanning
-TarangWatch actively connects to remote SDR antennas in Delhi, Mumbai, and Bengaluru, ingesting real-time raw IQ audio feeds. The Python-based signal processing pipeline applies windowed Fast Fourier Transforms (FFT) to convert signal power into continuous spectral density data.
-Deep Pattern Isolation
-Signals that deviate from established allocations are classified using standard signal parameters (bandwidth, duration, peak power, and frequency hopping). Those flagged as anomalies are isolated, cataloged, and assigned cryptographic hashes.
-Cognitive Fingerprinting and Memory
-Instead of analyzing alerts in isolation, the platform builds a persistent, long-term cognitive memory layer. Utilizing vector embeddings (Supabase pgvector) and the Hindsight Memory SDK, it correlates new detections against historic profiles to track transmission cycles, schedules, and multi-city signal propagation.
-High-Density Operator Interface
-A low-latency, dark-themed control panel provides operators with real-time Area Charts, live telemetry tickers, an integrated pattern vault, and natural language intelligence briefs compiled using advanced language models (Groq Llama-3).
-Architecture
-Ingest Node: Python 3.11, WebSocket client, NumPy, SciPy (FFT Processor)
-Control Server: Node.js, Express, TypeScript, Socket.io
-Database and Memory: Supabase PostgreSQL (pgvector), Hindsight Memory SDK
-Dashboard: React 18, Vite, Zustand, TailwindCSS, Recharts
-Environment Variables
-Each sub-project has its own `.env.example` file. Copy it to `.env` and fill in your credentials before starting the service.
+# tarang watch - it catches what no one else does !
+
+it’s 2:47 a.m. over the Indian subcontinent.  
+somewhere in the HF band, a short burst fires at 14.235 MHz.  
+no callsign. no license. no operator logging it.  
+gone in less than two seconds.
+
+no human hears it. no conventional monitoring system flags it.  
+nothing changes. until weeks later, the same burst appears again.
+
+this time, **tarangwatch** is listening.
+
+it matches the spectral fingerprint. raises the alert.  
+writes the brief. remembers the waveform.
+
+that’s the idea behind tarang:  
+a live, AI‑augmented HF spectrum watcher that sees patterns  
+where humans and static rules don’t.
+
+---
+
+## what this project is
+
+**tarangwatch** is a real‑time HF radio spectrum monitoring platform  
+built for the Indian subcontinent. it connects to public SDR (software‑defined radio)  
+nodes in Delhi, Mumbai, and Bengaluru, continuously listens to the airwaves,  
+and uses signal‑processing plus AI to detect, fingerprint, and memorize anomalous transmissions.
+
+it’s not just a dashboard. it’s a **cognitive signal‑watcher**:  
+- if a rogue transmitter appears today, stays quiet for weeks, and returns  
+- tarangwatch recognizes it tomorrow.
+
+---
+
+## what it actually does
+
+- **listens** to live HF radio feeds from three Indian cities via public KiwiSDR nodes.  
+  no custom hardware required on your side; you just point at existing waterfall streams.
+
+- **detects** signals that deviate from known allocations  
+  using windowed FFT (Fast Fourier Transform) to track power spectral density in real time.
+
+- **fingerprints** every anomaly using a “signal DNA” tuple:  
+  bandwidth, duration, peak power, spectral shape, and timing pattern.  
+  each fingerprint is hashed and stored along with vector embeddings for similarity search.
+
+- **remembers** across time using:
+  - **Supabase PostgreSQL** with **pgvector** for vector‑similarity retrieval  
+  - **Hindsight Memory SDK** to build a graph‑like memory of past events and patterns  
+  so repeated “rogue” or unknown signals can be linked even if they appear days apart.
+
+- **briefs** operators via **Groq Llama 3** (LPU‑inference)  
+  by turning raw spectral statistics into plain‑language summaries:  
+  what was detected, how unusual it looks, and how confident the system is.
+
+- **shows** everything on a dark‑mode operator dashboard with:
+  - live spectrum charts per city  
+  - real‑time telemetry (node status, SNR, CPU, load)  
+  - a fingerprint vault where you can inspect, tag, and replay past detections.
+
+---
+
+## tech stack
+
+| layer                  | technology |
+|------------------------|-----------|
+| signal processing      | Python 3.11, NumPy, SciPy, WebSocket client |
+| backend API            | Node.js, Express, TypeScript, Socket.io |
+| database & memory      | Supabase (PostgreSQL + pgvector), Hindsight Memory SDK |
+| AI intelligence layer  | Groq Llama 3 (via Groq Cloud API) |
+| frontend dashboard     | React 18, Vite, Zustand, TailwindCSS, Recharts |
+| deployment targets     | Vercel (frontend), Render (backend), Supabase cloud (DB) |
+
+---
+
+## repo structure
+
+```text
+tarang4all/
+├── frontend/          # React operator dashboard
+├── backend/           # Express API + Socket.io server
+└── signal-processor/  # Python FFT pipeline + KiwiSDR client
+```
+
+---
+
+## setup — run it locally
+
+you need:
+
+- Node.js 18+  
+- Python 3.11+  
+- a Supabase project (free tier is enough)  
+- optionally a Groq API key for Llama 3 reasoning
+
+### 1. clone the repo
+
 ```bash
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
