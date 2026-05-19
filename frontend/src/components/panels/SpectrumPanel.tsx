@@ -6,6 +6,7 @@ import {
 import { io } from 'socket.io-client'
 import { useTarangStore } from '../../store/tarangStore'
 import Badge from '../shared/Badge'
+import IndiaMapView from './IndiaMapView'
 
 interface Marker {
   id: string
@@ -468,6 +469,9 @@ export default function SpectrumPanel() {
           )}
         </div>
       </div>
+
+      {/* 5. INDIA MAP - NATIONAL THREAT TOPOLOGY */}
+      <IndiaMapView />
 
     </div>
   )
