@@ -99,12 +99,6 @@ export function setupSocketHandlers(io: Server): void {
       }, 400)
     })
 
-    // If env has DEMO_MODE=true, trigger demo loop automatically for seamless default experience
-    if (process.env.DEMO_MODE === 'true' && !demoInterval) {
-      console.log("[Socket] Auto-triggering demo simulation loop from DEMO_MODE env...");
-      socket.emit('start_demo');
-    }
-
     socket.on('disconnect', () => {
       console.log(`[Socket] Client disconnected: ${socket.id}`)
     })
