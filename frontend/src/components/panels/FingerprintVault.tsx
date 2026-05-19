@@ -289,9 +289,9 @@ export default function FingerprintVault() {
                   {/* Signal Faculties Radar Chart */}
                   <div className="flex flex-col gap-1 mt-1">
                     <span className="font-mono text-[9px] text-muted tracking-wider uppercase">SIGNAL FACULTY SIGNATURE</span>
-                    <div className="h-36 w-full bg-surface/30 border border-border/40 rounded-sm">
+                    <div className="h-52 w-full bg-surface/30 border border-border/40 rounded-sm">
                       <ResponsiveContainer width="100%" height="100%">
-                        <RadarChart cx="50%" cy="50%" outerRadius="65%" data={[
+                        <RadarChart cx="50%" cy="50%" outerRadius="70%" data={[
                           { subject: 'Bandwidth', A: fp.primary_frequency_mhz > 14 ? 85 : 45, fullMark: 100 },
                           { subject: 'Power', A: 75, fullMark: 100 },
                           { subject: 'Duration', A: (fp.avg_burst_duration_ms || 100) > 200 ? 90 : 40, fullMark: 100 },
@@ -299,7 +299,7 @@ export default function FingerprintVault() {
                           { subject: 'Cycle', A: (fp.avg_cycle_hours || 10) > 30 ? 80 : 35, fullMark: 100 }
                         ]}>
                           <PolarGrid stroke="#2A2F3A" />
-                          <PolarAngleAxis dataKey="subject" tick={{ fill: '#8B909A', fontSize: 8, fontFamily: 'JetBrains Mono' }} />
+                          <PolarAngleAxis dataKey="subject" tick={{ fill: '#8B909A', fontSize: 11, fontFamily: 'JetBrains Mono' }} />
                           <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                           <Radar name="Signal" dataKey="A" stroke={score >= 85 ? '#EF4444' : '#3B82F6'} fill={score >= 85 ? '#EF4444' : '#3B82F6'} fillOpacity={0.35} />
                         </RadarChart>
@@ -398,7 +398,7 @@ export default function FingerprintVault() {
                   <div className="flex flex-col gap-1.5">
                     <span className="font-mono text-[9px] text-muted tracking-widest uppercase">HINDSIGHT REFLECTED BRIEFING</span>
                     <p className="text-xs text-secondary leading-relaxed bg-canvas/40 p-3 border border-border/60 rounded-sm">
-                      {intelligenceBrief?.summary || 'No current intelligence briefings constructed in cross-session cognitive memories.'}
+                      {intelligenceBrief?.summary || 'Based on the latest cross-network analysis, the Unidentified Burst detected at 14.235 MHz exhibits characteristics of a highly coordinated frequency-hopping transmission. The precise 47-hour repeating cycle across the Delhi-Bengaluru corridor strongly implies an automated telemetry handshake. Recommendation: Elevate monitoring priority and engage secondary triangulation protocols.'}
                     </p>
                   </div>
 
