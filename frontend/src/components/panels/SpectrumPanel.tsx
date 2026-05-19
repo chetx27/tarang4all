@@ -83,10 +83,10 @@ export default function SpectrumPanel() {
           return [newMarker, ...filtered].slice(0, 3)
         })
 
-        // Remove marker after 8 seconds
+        // Remove marker after 5 seconds
         setTimeout(() => {
           setActiveMarkers(prev => prev.filter(m => m.id !== newMarker.id))
-        }, 8000)
+        }, 5000)
       }
     }
   }, [anomalies, selectedCity])

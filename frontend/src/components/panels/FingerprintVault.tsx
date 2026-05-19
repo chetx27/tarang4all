@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Brain, Clock, X, Copy, Check } from 'lucide-react'
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts'
 import { useTarangStore } from '../../store/tarangStore'
 import ConfidenceBar from '../shared/ConfidenceBar'
 import Badge from '../shared/Badge'
@@ -283,6 +284,27 @@ export default function FingerprintVault() {
                     <p className="text-xs text-secondary leading-relaxed bg-surface/50 p-2.5 border border-border rounded-sm">
                       {fp.pattern_intelligence || 'Baseline fingerprint created. Accumulating behavioral samples to correlate schedule heuristics.'}
                     </p>
+                  </div>
+
+                  {/* Signal Faculties Radar Chart */}
+                  <div className="flex flex-col gap-1 mt-1">
+                    <span className="font-mono text-[9px] text-muted tracking-wider uppercase">SIGNAL FACULTY SIGNATURE</span>
+                    <div className="h-36 w-full bg-surface/30 border border-border/40 rounded-sm">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RadarChart cx="50%" cy="50%" outerRadius="65%" data={[
+                          { subject: 'Bandwidth', A: fp.primary_frequency_mhz > 14 ? 85 : 45, fullMark: 100 },
+                          { subject: 'Power', A: 75, fullMark: 100 },
+                          { subject: 'Duration', A: (fp.avg_burst_duration_ms || 100) > 200 ? 90 : 40, fullMark: 100 },
+                          { subject: 'Threat', A: score, fullMark: 100 },
+                          { subject: 'Cycle', A: (fp.avg_cycle_hours || 10) > 30 ? 80 : 35, fullMark: 100 }
+                        ]}>
+                          <PolarGrid stroke="#2A2F3A" />
+                          <PolarAngleAxis dataKey="subject" tick={{ fill: '#8B909A', fontSize: 8, fontFamily: 'JetBrains Mono' }} />
+                          <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                          <Radar name="Signal" dataKey="A" stroke={score >= 85 ? '#EF4444' : '#3B82F6'} fill={score >= 85 ? '#EF4444' : '#3B82F6'} fillOpacity={0.35} />
+                        </RadarChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
 
                   {/* Dynamic timing details */}

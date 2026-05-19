@@ -68,8 +68,11 @@ export function setupSocketHandlers(io: Server): void {
           fft_data.push(Math.min(100, Math.max(0, Math.round(val * 100))))
         }
 
+        const cities = ["Delhi", "Mumbai", "Bengaluru"]
+        const targetCity = cities[Math.floor(timeSec / 5) % cities.length]
+
         const data = {
-          city: "Bengaluru",
+          city: targetCity,
           timestamp: timeSec,
           fft_data: fft_data,
           peak_freq: 14235,
@@ -79,15 +82,15 @@ export function setupSocketHandlers(io: Server): void {
 
         io.emit('spectrum_update', data)
 
-        if (Math.random() < 0.18) {
+        if (Math.random() < 0.15) {
           const newAnomaly = {
             id: Math.random().toString(36).substring(7),
-            city: "Bengaluru",
+            city: targetCity,
             peak_frequency_mhz: 14.235,
             peak_power_db: -58.4,
             bandwidth_khz: 3.5,
             duration_ms: 120,
-            threat_level: Math.random() < 0.3 ? "high" : "medium",
+            threat_level: Math.random() < 0.4 ? "high" : "medium",
             signal_class: "Unidentified Burst",
             is_burst: true,
             detected_at: new Date().toISOString(),
