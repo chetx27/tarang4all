@@ -53,7 +53,7 @@ try:
             sio.emit('anomaly_detected', anomaly_payload)
             print(f"🚨 Emitted anomaly_detected: {anomaly_payload}")
             
-        time.sleep(4)  # Update every 4 seconds
+        time.sleep(0.4)  # Update every 0.4 seconds
 
 except KeyboardInterrupt:
     print("\nStopping demo streamer...")

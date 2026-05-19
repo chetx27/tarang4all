@@ -263,10 +263,10 @@ export default function SpectrumPanel() {
   const cities = ['Delhi', 'Mumbai', 'Bengaluru']
 
   return (
-    <div className="h-full flex flex-col bg-canvas select-none">
+    <div className="min-h-full flex flex-col bg-canvas select-none overflow-y-auto">
       
       {/* 1. CITY TABS AND DEMO BUTTON */}
-      <div className="flex justify-between border-b border-border bg-surface px-2">
+      <div className="flex justify-between border-b border-border bg-surface px-2 shrink-0">
         <div className="flex">
           {cities.map(city => {
             const node = nodes.find(n => n.city === city)
@@ -305,9 +305,9 @@ export default function SpectrumPanel() {
       </div>
 
       {/* 2. SPECTRUM VISUALIZER WORKSPACE */}
-      <div className="flex-1 p-4 bg-canvas flex flex-col gap-4 min-h-[380px]">
+      <div className="flex-1 p-4 bg-canvas flex flex-col gap-4 min-h-[500px]">
         {/* Top: 2D PSD Density Curve */}
-        <div className="flex-[3] min-h-[200px] relative">
+        <div className="flex-[3] min-h-[260px] relative">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={psdData} margin={{ top: 20, right: 10, left: -25, bottom: 0 }}>
               <defs>
@@ -371,14 +371,14 @@ export default function SpectrumPanel() {
         </div>
 
         {/* Bottom: 3D Rolling Spectrogram Waterfall */}
-        <div className="flex-[2] min-h-[110px] flex flex-col gap-1.5">
+        <div className="flex-[2] min-h-[160px] flex flex-col gap-1.5">
           <div className="flex justify-between items-center text-[9px] font-mono text-muted tracking-wider">
             <span className="uppercase font-semibold text-secondary">REAL-TIME SPECTROGRAM WATERFALL (HISTORICAL SCAN)</span>
             <span>-120 dBm ────── -40 dBm</span>
           </div>
           <canvas 
             ref={waterfallCanvasRef} 
-            className="border border-border/80 rounded-sm w-full flex-1 h-[110px] shadow-inner select-none pointer-events-none"
+            className="border border-border/80 rounded-sm w-full flex-1 h-[160px] shadow-inner select-none pointer-events-none"
           />
         </div>
       </div>

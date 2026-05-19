@@ -96,7 +96,7 @@ export function setupSocketHandlers(io: Server): void {
           }
           io.emit('anomaly_detected', newAnomaly)
         }
-      }, 4000)
+      }, 400)
     })
 
     // If env has DEMO_MODE=true, trigger demo loop automatically for seamless default experience
