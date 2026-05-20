@@ -1,4 +1,4 @@
-# tarang watch - it catches what no one else does !
+# tarang(watch) - it catches what no one else does !
 
 it’s 2:47 a.m. over the Indian subcontinent.  
 somewhere in the HF band, a short burst fires at 14.235 MHz.  
@@ -205,3 +205,22 @@ Start each service
    python main.py
    ```
 > **Security note:** Never commit `.env` files to version control. The `.gitignore` already excludes them. Only commit the `.env.example` files with placeholder values.
+
+---
+
+## what's next
+
+tarang is v0. it works. but there's more coming.
+
+more KiwiSDR nodes at Chennai, Hyderabad, Kolkata. TDOA-based direction finding so you know where it transmitted, not just that it did. 
+
+Telegram alerts so you're not glued to the dashboard. a custom signal classifier trained on real accumulated Indian HF fingerprint data — not just FFT heuristics. a public anonymized signal archive for researchers and regulators. and eventually, a low-cost plug-in hardware node that auto-registers with the tarang grid. no KiwiSDR dependency. just plug it in, point it up, and it starts feeding.
+
+**India has one of the most active HF corridors in the world and almost zero automated cognitive monitoring over it. tarang is the first step toward changing that.**
+
+it's not a research paper. it's not a concept. it runs. it listens. it remembers.
+the airwaves don't lie. tarang just finally starts paying attention.
+
+⭐ if this is useful, interesting, or just cool to you — star the repo. it helps more than you think.
+
+---
