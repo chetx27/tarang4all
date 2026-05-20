@@ -32,6 +32,48 @@ it’s not just a dashboard. it’s a **cognitive signal‑watcher**:
 
 ---
 
+## the problem
+
+the HF band is chaos.
+
+pirates, jammers, unlicensed operators, experimental bursts — they're all out there, hiding in plain sight. traditional spectrum monitoring in India is manual, under-resourced, and reactive. by the time a human analyst notices something weird, the signal is long gone and the transmitter has moved on.
+
+static rule-based systems aren't much better. they flag everything or nothing. they don't *learn*. they don't *remember*. and they definitely can't tell you "this weird 2-second burst at 14.235 MHz? yeah, we saw something with the same spectral shape three weeks ago, from the same rough bearing."
+
+no one is building cognitive, persistent, AI-augmented monitoring for the Indian subcontinent's HF band.
+
+until now.
+
+---
+
+## what tarang fixes
+
+- **the blindspot problem** — most SDR setups are human-in-the-loop. if no one's watching the waterfall, nothing gets caught. tarang watches 24/7, no babysitting needed.
+- **the amnesia problem** — signals disappear and reappear. without memory, every detection is isolated. tarang links past and present via vector embeddings + Hindsight Memory, so patterns across weeks get surfaced automatically.
+- **the noise problem** — not every blip is worth an alert. tarang fingerprints anomalies with signal DNA (bandwidth, duration, shape, timing) and scores them before escalating — so you're not drowning in false positives.
+- **the jargon problem** — raw FFT output means nothing to a non-engineer. Groq Llama 3 turns spectral stats into plain-language operator briefs. you get *what it is*, *how weird it is*, and *how sure we are*.
+
+---
+
+## where tarang can actually be used
+
+**spectrum regulators & TRAI enforcement**
+flag unlicensed transmitters, pirate broadcasters, and interference sources across the HF band — automatically, continuously, with timestamped evidence.
+
+**OUR STAR POINT** - **defence & border monitoring (research / academic context)**
+detect unusual burst transmissions near sensitive corridors. useful as a research prototype for low-cost persistent HF surveillance.
+
+**amateur radio & research communities**
+log rare propagation events, DX anomalies, and ionospheric skip patterns across Indian SDR nodes. build a crowdsourced signal archive over time.
+
+**disaster response & telecom resilience**
+monitor HF emergency bands for irregular or unauthorized activity during blackouts, when HF becomes the fallback channel.
+
+**academic & ML research**
+a real-world dataset of HF anomaly fingerprints + vector embeddings is genuinely rare. tarang generates one passively, making it useful for training signal classification models.
+
+---
+
 ## what it actually does
 
 - **listens** to live HF radio feeds from three Indian cities via public KiwiSDR nodes.  
