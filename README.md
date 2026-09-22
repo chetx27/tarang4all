@@ -17,8 +17,6 @@ that’s the idea behind tarang:
 a live, AI‑augmented HF spectrum watcher that sees patterns  
 where humans and static rules don’t.
 
----
-
 ## what this project is
 
 **tarangwatch** is a real‑time HF radio spectrum monitoring platform  
@@ -29,8 +27,6 @@ and uses signal‑processing plus AI to detect, fingerprint, and memorize anomal
 it’s not just a dashboard. it’s a **cognitive signal‑watcher**:  
 - if a rogue transmitter appears today, stays quiet for weeks, and returns  
 - tarangwatch recognizes it tomorrow.
-
----
 
 ## the problem
 
@@ -44,8 +40,6 @@ no one is building cognitive, persistent, AI-augmented monitoring for the Indian
 
 until now.
 
----
-
 ## what tarang fixes
 
 - **the blindspot problem** — most SDR setups are human-in-the-loop. if no one's watching the waterfall, nothing gets caught. tarang watches 24/7, no babysitting needed.
@@ -53,7 +47,6 @@ until now.
 - **the noise problem** — not every blip is worth an alert. tarang fingerprints anomalies with signal DNA (bandwidth, duration, shape, timing) and scores them before escalating — so you're not drowning in false positives.
 - **the jargon problem** — raw FFT output means nothing to a non-engineer. Groq Llama 3 turns spectral stats into plain-language operator briefs. you get *what it is*, *how weird it is*, and *how sure we are*.
 
----
 
 ## where tarang can actually be used
 
@@ -71,8 +64,6 @@ monitor HF emergency bands for irregular or unauthorized activity during blackou
 
 **academic & ML research**
 a real-world dataset of HF anomaly fingerprints + vector embeddings is genuinely rare. tarang generates one passively, making it useful for training signal classification models.
-
----
 
 ## what it actually does
 
@@ -100,8 +91,6 @@ a real-world dataset of HF anomaly fingerprints + vector embeddings is genuinely
   - real‑time telemetry (node status, SNR, CPU, load)  
   - a fingerprint vault where you can inspect, tag, and replay past detections.
 
----
-
 ## tech stack
 
 | layer                  | technology |
@@ -113,8 +102,6 @@ a real-world dataset of HF anomaly fingerprints + vector embeddings is genuinely
 | frontend dashboard     | React 18, Vite, Zustand, TailwindCSS, Recharts |
 | deployment targets     | Vercel (frontend), Render (backend), Supabase cloud (DB) |
 
----
-
 ## repo structure
 
 ```text
@@ -123,8 +110,6 @@ tarang4all/
 ├── backend/           # Express API + Socket.io server
 └── signal-processor/  # Python FFT pipeline + KiwiSDR client
 ```
-
----
 
 ## setup — run it locally
 
@@ -206,8 +191,6 @@ Start each service
    ```
 > **Security note:** Never commit `.env` files to version control. The `.gitignore` already excludes them. Only commit the `.env.example` files with placeholder values.
 
----
-
 ## what's next
 
 tarang is v0. it works. but there's more coming.
@@ -222,5 +205,3 @@ it's not a research paper. it's not a concept. it runs. it listens. it remembers
 the airwaves don't lie. tarang just finally starts paying attention.
 
 ⭐ if this is useful, interesting, or just cool to you — star the repo. it helps more than you think.
-
----
