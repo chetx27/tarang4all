@@ -197,7 +197,7 @@ tarang is v0. it works. but there's more coming.
 
 more KiwiSDR nodes at Chennai, Hyderabad, Kolkata. TDOA-based direction finding so you know where it transmitted, not just that it did. 
 
-Telegram alerts so you're not glued to the dashboard. a custom signal classifier trained on real accumulated Indian HF fingerprint data — not just FFT heuristics. a public anonymized signal archive for researchers and regulators. and eventually, a low-cost plug-in hardware node that auto-registers with the tarang grid. no KiwiSDR dependency. just plug it in, point it up, and it starts feeding.
+Telegram alerts so you're not glued to the dashboard. a custom signal classifier trained on real accumulated Indian HF fingerprint data not just FFT heuristics. a public anonymized signal archive for researchers and regulators. and eventually, a low-cost plug-in hardware node that auto-registers with the tarang grid. no KiwiSDR dependency. just plug it in, point it up, and it starts feeding.
 
 **India has one of the most active HF corridors in the world and almost zero automated cognitive monitoring over it. tarang is the first step toward changing that.**
 
