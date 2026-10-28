@@ -47,7 +47,6 @@ until now.
 - **the noise problem** — not every blip is worth an alert. tarang fingerprints anomalies with signal DNA (bandwidth, duration, shape, timing) and scores them before escalating — so you're not drowning in false positives.
 - **the jargon problem** — raw FFT output means nothing to a non-engineer. Groq Llama 3 turns spectral stats into plain-language operator briefs. you get *what it is*, *how weird it is*, and *how sure we are*.
 
-
 ## where tarang can actually be used
 
 **spectrum regulators & TRAI enforcement**
@@ -204,4 +203,4 @@ Telegram alerts so you're not glued to the dashboard. a custom signal classifier
 it's not a research paper. it's not a concept. it runs. it listens. it remembers.
 the airwaves don't lie. tarang just finally starts paying attention.
 
-⭐ if this is useful, xoxo
+xoxo
