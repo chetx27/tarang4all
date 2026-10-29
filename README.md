@@ -34,9 +34,7 @@ the HF band is chaos.
 
 pirates, jammers, unlicensed operators, experimental bursts — they're all out there, hiding in plain sight. traditional spectrum monitoring in India is manual, under-resourced, and reactive. by the time a human analyst notices something weird, the signal is long gone and the transmitter has moved on.
 
-static rule-based systems aren't much better. they flag everything or nothing. they don't *learn*. they don't *remember*. and they definitely can't tell you "this weird 2-second burst at 14.235 MHz? yeah, we saw something with the same spectral shape three weeks ago, from the same rough bearing."
-
-no one is building cognitive, persistent, AI-augmented monitoring for the Indian subcontinent's HF band.
+static rule-based systems aren't much better. they flag everything or nothing. they don't *learn*. they don't *remember*. and they definitely can't tell you "this weird 2-second burst at 14.235 MHz? yeah, we saw something with the same spectral shape three weeks ago, from the same rough bearing." no one is building cognitive, persistent, AI-augmented monitoring for the Indian subcontinent's HF band.
 
 until now.
 
