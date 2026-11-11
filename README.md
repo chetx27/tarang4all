@@ -2,26 +2,22 @@
 
 it’s 2:47 a.m. over the Indian subcontinent.  
 somewhere in the HF band, a short burst fires at 14.235 MHz.  
-no callsign. no license. no operator logging it.  
-gone in less than two seconds.
+no callsign. no license. no operator logging it.  gone in less than two seconds.
 
 no human hears it. no conventional monitoring system flags it.  
 nothing changes. until weeks later, the same burst appears again.
 
 this time, **tarangwatch** is listening.
 
-it matches the spectral fingerprint. raises the alert.  
-writes the brief. remembers the waveform.
+it matches the spectral fingerprint. raises the alert. writes the brief. remembers the waveform.
 
 that’s the idea behind tarang:  
-a live, AI‑augmented HF spectrum watcher that sees patterns  
-where humans and static rules don’t.
+a live, AI‑augmented HF spectrum watcher that sees patterns where humans and static rules don’t.
 
 ## what this project is
 
 **tarangwatch** is a real‑time HF radio spectrum monitoring platform  
-built for the Indian subcontinent. it connects to public SDR (software‑defined radio)  
-nodes in Delhi, Mumbai, and Bengaluru, continuously listens to the airwaves,  
+built for the Indian subcontinent. it connects to public SDR (software‑defined radio) nodes in Delhi, Mumbai, and Bengaluru, continuously listens to the airwaves,  
 and uses signal‑processing plus AI to detect, fingerprint, and memorize anomalous transmissions.
 
 it’s not just a dashboard. it’s a **cognitive signal‑watcher**:  
@@ -41,8 +37,11 @@ until now.
 ## what tarang fixes
 
 - **the blindspot problem** — most SDR setups are human-in-the-loop. if no one's watching the waterfall, nothing gets caught. tarang watches 24/7, no babysitting needed.
+- 
 - **the amnesia problem** — signals disappear and reappear. without memory, every detection is isolated. tarang links past and present via vector embeddings + Hindsight Memory, so patterns across weeks get surfaced automatically.
+- 
 - **the noise problem** — not every blip is worth an alert. tarang fingerprints anomalies with signal DNA (bandwidth, duration, shape, timing) and scores them before escalating — so you're not drowning in false positives.
+- 
 - **the jargon problem** — raw FFT output means nothing to a non-engineer. Groq Llama 3 turns spectral stats into plain-language operator briefs. you get *what it is*, *how weird it is*, and *how sure we are*.
 
 ## where tarang can actually be used
