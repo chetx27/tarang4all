@@ -197,7 +197,4 @@ Telegram alerts so you're not glued to the dashboard. a custom signal classifier
 
 **India has one of the most active HF corridors in the world and almost zero automated cognitive monitoring over it. tarang is the first step toward changing that.**
 
-it's not a research paper. it's not a concept. it runs. it listens. it remembers.
-the airwaves don't lie. tarang just finally starts paying attention.
-
 xoxo
